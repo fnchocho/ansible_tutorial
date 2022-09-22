@@ -44,7 +44,10 @@
       state: latest  
     when: ansible_distribution == "CentOS"
   
+<<<<<<< HEAD
 
+=======
+>>>>>>> 65051f5f13182b88fbb28818867ec46f7e81ae29
 - hosts: db_servers
   become: true
   tasks:
@@ -59,7 +62,11 @@
 
 
   - name: install mariadb package (Ubuntu)
+<<<<<<< HEAD
     tags: ubuntu,db,mariadb
+=======
+    tags: db,mariadb,ubuntu
+>>>>>>> 65051f5f13182b88fbb28818867ec46f7e81ae29
     apt:
       name: 
         - mariadb-server
