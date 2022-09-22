@@ -43,11 +43,19 @@
         - php
       state: latest  
     when: ansible_distribution == "CentOS"
-  
-<<<<<<< HEAD
+ 
 
-=======
->>>>>>> 65051f5f13182b88fbb28818867ec46f7e81ae29
+  - name: copy default html file for site
+    tags: apache,apache2,httpd
+    copy:
+      src: default_site.html
+      dest: /var/www/html/index.html
+      owner: root
+      group: root
+      mode: 0644
+
+
+
 - hosts: db_servers
   become: true
   tasks:
@@ -62,11 +70,7 @@
 
 
   - name: install mariadb package (Ubuntu)
-<<<<<<< HEAD
-    tags: ubuntu,db,mariadb
-=======
     tags: db,mariadb,ubuntu
->>>>>>> 65051f5f13182b88fbb28818867ec46f7e81ae29
     apt:
       name: 
         - mariadb-server
