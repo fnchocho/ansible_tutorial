@@ -1,0 +1,58 @@
+
+#This is a bootstrap script used to configure a fresh server on which ansible has not run. The goal is to
+# set up the environment for ansible to do its work
+#
+
+---
+
+- hosts: all                # for all servers in this collection
+  become: true
+  tasks:
+
+  - name: install updates (CentOS)  # Install all updates for new env
+    tags: always
+    dnf:
+      update_only: yes
+      update_cache: yes
+    when: ansible_distribution == "CentOS" 
+
+
+  - name: install updates (Ubuntu)
+    tags: always
+    apt:
+      upgrade: dist
+      update_cache: yes
+    when: ansible_distribution == "Ubuntu" 
+
+
+- hosts: all
+  become: true
+  tasks: 
+  - name: create simone user                 # new user to be added
+    tags: always
+    user:
+      name: simone                           # name of new user to be added
+      groups: root                           # group of new user
+
+  - name: add ssh key for simone
+    tags: always
+    authorized_key: 
+      user: simone
+      key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIH3Db/5f2cXO4n3+NqALwYM05ITMUxMtkflrz9L1QnwP ansible"  # ansible key for this env
+  
+
+  - name: add sudoers file for simone   # allow simone use sudo- to gain root previledges
+    tags: always
+    copy: 
+        src: /home/fidelis/ansible_tutorial/files/sudoers_simone            # copy this file and put in the /etc/sudoers file
+        dest: /etc/sudoers.d/simone
+        owner: root                     # permissions for new sudoers file
+        group: root 
+        mode: 0440         
+
+
+
+
+
+
+

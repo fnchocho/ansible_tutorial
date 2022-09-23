@@ -5,20 +5,28 @@
   become: true
   tasks:
 
-  - name: install updates (CentOS)
+  - name: update repo cacche (CentOS)
     tags: always
     dnf:
-      update_only: yes
-      update_cache: yes
+      update_cache: yes                       # make sure repository indices are not stale, else our play could fail
+    changed_when: false                       # Have control of what is considered a change. we will not see change = 1 anytime the cache is updated, to keep the logs clean 
     when: ansible_distribution == "CentOS" 
 
 
-  - name: install updates (Ubuntu)
+  - name: update repo cache (Ubuntu)
     tags: always
     apt:
-      upgrade: dist
       update_cache: yes
+    changed_when: false
     when: ansible_distribution == "Ubuntu" 
+
+
+  - name: add ssh key for simone
+    tags: always
+    authorized_key: 
+      user: simone
+      key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIH3Db/5f2cXO4n3+NqALwYM05ITMUxMtkflrz9L1QnwP ansible"  # ansible key for this env
+  
 
 - hosts: workstations
   become: true
