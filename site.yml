@@ -67,8 +67,28 @@
     service:
       name: httpd
       state: started
-      ebabled: yes
+      enabled: yes
     when: ansible_distribution == "CentOS"
+
+
+  - name: change email address for admin
+    tags: apache,centos,httpd
+    lineinfile:
+      path: /etc/httpd/conf/httpd.conf        # path to file that would be changed
+      regexp: '^ServerAdmin'                  # line must begin as shown, no space before ServerAdmin
+      line: ServerAdmin fnchocho@gmail.com    # new change, Your address, where problems with the server should be sent 
+    when: ansible_distribution == "CentOS"    # Only for centos os, since would be diff for ubuntu
+    register: httpd                           # allow us capture the state of a new variable called httpd, could be named anything!
+
+
+  - name: restart httpd (CentOS)
+    tags: CentOS,apache,httpd
+    service:
+      name: httpd
+      state: restarted
+    when: httpd.changed          #after play change email play runs, would generate variable httpd and would trigger httpd restart play ONLY if there was a change  
+    
+
 
 
   - name: copy default html file for site
