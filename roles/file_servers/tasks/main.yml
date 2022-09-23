@@ -1,0 +1,7 @@
+
+
+- name: install samba package
+  tags: samba
+  package:  # name of package is same for both OS
+      name: samba  
+      state: latest 

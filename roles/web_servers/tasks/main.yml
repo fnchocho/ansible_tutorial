@@ -1,0 +1,57 @@
+
+
+- name: install apache and php
+  tags: apache,apache2,ubuntu
+  apt:   #ubuntu OS package manager
+    name: 
+        - apache2
+        - libapache2-mod-php
+    state: latest  
+  when: ansible_distribution == "Ubuntu"
+
+
+- name: install apache and php
+  tags: apache,centos,httpd
+  dnf:   #CentOS OS package manager
+     name: 
+        - httpd
+        - php
+     state: latest  
+  when: ansible_distribution == "CentOS"
+ 
+- name: start httpd (CentOS)
+  tags: apache,centos,httpd
+  service:
+      name: httpd
+      state: started
+      enabled: yes
+  when: ansible_distribution == "CentOS"
+
+
+- name: change email address for admin
+  tags: apache,centos,httpd
+  lineinfile:
+      path: /etc/httpd/conf/httpd.conf        # path to file that would be changed
+      regexp: '^ServerAdmin'                  # line must begin as shown, no space before ServerAdmin
+      line: ServerAdmin fnchocho@gmail.com    # new change, Your address, where problems with the server should be sent 
+  when: ansible_distribution == "CentOS"    # Only for centos os, since would be diff for ubuntu
+  register: httpd                           # allow us capture the state of a new variable called httpd, could be named anything!
+
+
+- name: restart httpd (CentOS)
+  tags: CentOS,apache,httpd
+  service:
+      name: httpd
+      state: restarted
+  when: httpd.changed          #after play change email play runs, would generate variable httpd and would trigger httpd restart play ONLY if there was a change  
+    
+
+
+- name: copy default html file for site
+  tags: apache,apache2,httpd
+  copy:
+      src: default_site.html
+      dest: /var/www/html/index.html
+      owner: root
+      group: root
+      mode: 0644
