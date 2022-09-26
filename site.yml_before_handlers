@@ -32,9 +32,18 @@
   lineinfile:
       path: /etc/httpd/conf/httpd.conf        # path to file that would be changed
       regexp: '^ServerAdmin'                  # line must begin as shown, no space before ServerAdmin
-      line: ServerAdmin somebody@somewhere.net 
+      line: ServerAdmin fnchocho@gmail.com    # new change, Your address, where problems with the server should be sent 
   when: ansible_distribution == "CentOS"    # Only for centos os, since would be diff for ubuntu
-  notify: restart_apache                           # allow us capture the state of a new variable called httpd, could be named anything!
+  register: apache                           # allow us capture the state of a new variable called httpd, could be named anything!
+
+
+- name: restart httpd
+  tags: apache,httpd
+  service:
+      name: "{{ apache_service }}"    #Refer to apache service as variable instead of hard coding
+      state: restarted
+  when: apache.changed          #after play change email play runs, would generate variable apache and would trigger httpd restart play ONLY if there was a change  
+    
 
 
 - name: copy default html file for site
