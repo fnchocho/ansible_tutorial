@@ -4,7 +4,7 @@
   become: true
   pre_tasks:
 
-  - name: update repo cacche (CentOS)
+  - name: update repo index (CentOS)
     tags: always
     dnf:
       update_cache: yes                       # make sure repository indices are not stale, else our play could fail
@@ -12,7 +12,7 @@
     when: ansible_distribution == "CentOS" 
 
 
-  - name: update repo cache (Ubuntu)
+  - name: update repo index (Ubuntu)
     tags: always
     apt:
       update_cache: yes
